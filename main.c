@@ -47,7 +47,7 @@ int main()
     int pontuacao = 0;
 
     int contadorTempo = 0;
-    int mostrar = 1;
+    int mostrar = 0;
 
     int xBarra = 12;
     int yBarra = 10;
@@ -58,12 +58,15 @@ int main()
     int oX = 0;
     int oY = 1;
 
+    int sairEstado = 0;
+    int vOY = 0;
+
     char tela[12][32];
 
     int comecar = 0;
 
     while(letra != 27){
-        if(mostrar){
+        if(contadorTempo >= 10000){
             if(comecar){
                 if(yP <= 1){
                     oY = 1;
@@ -74,6 +77,7 @@ int main()
 
                 if(xP <= 1){
                     oX = 1;
+                    sairEstado = 1;
                 }
                 if(xP >= 10){
                     vidas--;
@@ -105,14 +109,22 @@ int main()
                 if(tela[xP][yP] == '&' || tela[xP][yP] == '_'){
                     if(tela[xP][yP] == '&'){
                         pontuacao++;
+                        sairEstado = 1;
                     }
-                    oY = oY;
-                    oX = !oX;
+
+                    if(tela[xP][yP] == '_' && letra == 32){
+                        oX = 0;
+                        vOY = oY;
+                        oY = 4;
+                    }else{
+                        oX = !oX;
+                        oY = oY;
+                    }
 
                     tela[xP][yP] = ' ';
 
                     if(oX == 0){
-                    xP = xP-1;
+                        xP = xP-1;
                     }
                     if(oX == 1){
                         xP = xP+1;
@@ -125,8 +137,15 @@ int main()
                         yP = yP+1;
                     }
                 }
+                //if(sairEstado){
+                 //       oY = vOY;
+                 //       sairEstado = 0;
+                //}
             }
+            contadorTempo = 0;
+        }
 
+        if(mostrar == 0){
             for(int c1 = 0; c1 < 12; c1++){
                 for(int c2 = 0; c2 < 32; c2++){
 
@@ -171,8 +190,9 @@ int main()
                 printf("\n");
             }
             iniciou = 1;
-            mostrar = 0;
         }
+        mostrar++;
+
         buffer = kbhit();
 
         if(buffer == 1){
@@ -197,10 +217,9 @@ int main()
             break;
         }
         contadorTempo++;
-        if(contadorTempo >= 10000){
-            mostrar = 1;
-            contadorTempo = 0;
+        if(mostrar >= 1000){
             system("clear");
+            mostrar = 0;
         }
     }
     printf("Adeus!\n");
